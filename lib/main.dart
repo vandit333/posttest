@@ -16,6 +16,7 @@ class posttest extends StatefulWidget {
 class _posttestState extends State<posttest> {
   List<dataa> list=[];
   dataa? m;
+  bool isLoding=true;
 
   get() async {
     //get-1 ,post-2
@@ -23,7 +24,18 @@ class _posttestState extends State<posttest> {
     var response = await http.post(url);
     //string to json
     Map<String, dynamic> result=jsonDecode(response.body);
+   if(response.statusCode==200)
+     {
+       m=await dataa.fromJson(result);
+       if(m!=null){
 
+         setState(() {
+           isLoding=false;
+         });
+       }else{
+         print("null");
+       }
+     }
 
     setState(() {
       m=dataa.fromJson(result);
@@ -47,7 +59,9 @@ class _posttestState extends State<posttest> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: ListView.builder(itemCount: m!.data!.length,itemBuilder: (context, index) {
+      body:isLoding? Center(
+        child: CircularProgressIndicator(),
+      ) : ListView.builder(itemCount: m!.data!.length,itemBuilder: (context, index) {
         return Column(
           children: [
             ListTile(
