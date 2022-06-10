@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:posttest/dataa.dart';
@@ -16,20 +15,26 @@ class posttest extends StatefulWidget {
 
 class _posttestState extends State<posttest> {
   List<dataa> list=[];
+  dataa? m;
 
   get() async {
     //get-1 ,post-2
     var url = Uri.parse('https://vanditflutter.000webhostapp.com/text.php');
     var response = await http.post(url);
     //string to json
-    dynamic result=jsonDecode(response.body);
-    list.clear();
-    result.forEach((element) {
-      print(element);
-      setState(() {
-        list.add(dataa.fromJson(element));
-      });
+    Map<String, dynamic> result=jsonDecode(response.body);
+
+
+    setState(() {
+      m=dataa.fromJson(result);
     });
+
+    // result.forEach((element) {
+    //   print(element);
+    //   setState(() {
+    //     list.add(dataa.fromJson(element));
+    //   });
+    // });
   }
 
   @override
@@ -42,9 +47,20 @@ class _posttestState extends State<posttest> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: ListView.builder(itemCount: list.length,itemBuilder: (context, index) {
-        return ListTile(
-          title: Text("${list[index].data![index].landmark}"),
+      body: ListView.builder(itemCount: m!.data!.length,itemBuilder: (context, index) {
+        return Column(
+          children: [
+            ListTile(
+              title: Text("${m!.data![index].id}"),
+              subtitle: Text("${m!.data![index].userId}"),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("${m!.data![index].address}")
+                ],
+              ),
+            ),
+          ],
         );
       },),
     );
